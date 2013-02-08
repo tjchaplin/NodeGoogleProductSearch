@@ -1,5 +1,4 @@
-
-module.exports = function(app,express) {
+module.exports = function(app,express,passport,GoogleStrategy) {
 
     app.configure(function(){
         app.set('port', process.env.PORT || 3000);
@@ -18,4 +17,13 @@ module.exports = function(app,express) {
         app.use(express.static(app.root+'/public', {redirect: false}));
     });
 
+    passport.use(new GoogleStrategy({
+            returnURL: 'http://localhost:3000/auth/google/return',
+            realm: 'http://localhost:3000'
+        },
+        function(identifier, profile, done) {
+            console.log("identifier:"+identifier+" :");
+            done();
+        }
+    ));
 }

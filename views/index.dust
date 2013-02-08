@@ -16,6 +16,9 @@
     <script>
 
         $(document).ready(function(){
+            $("#googleLogin").click(function(event){
+                window.location="/auth/google";
+            });
         });
 
 
@@ -31,28 +34,55 @@
         <div class="container">
             <a class="brand" href="#">{title}</a>
             <div class="nav-collapse collapse">
+                <ul class="nav pull-right">
+                    <li class="active"> <button id="googleLogin" type="submit" class="btn">Sign in</button></li>
+                </ul>
             </div>
 
         </div>
     </div>
 </div>
 
-<div id="busy1" style="padding-top:50px; padding-bottom:50px;"></div>
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span3">
+            <div class="well sidebar-nav">
+                <ul class="nav nav-list">
+                    <li class="nav-header">Sidebar</li>
+                    <li class="active"><a href="#">Link</a></li>
+                    <li><a href="#">Link</a></li>
+                    <li><a href="#">Link</a></li>
+                    <li><a href="#">Link</a></li>
+                    <li class="nav-header">Sidebar</li>
+                    <li><a href="#">Link</a></li>
+                    <li><a href="#">Link</a></li>
+                    <li><a href="#">Link</a></li>
+                    <li><a href="#">Link</a></li>
+                    <li><a href="#">Link</a></li>
+                    <li><a href="#">Link</a></li>
+                    <li class="nav-header">Sidebar</li>
+                    <li><a href="#">Link</a></li>
+                    <li><a href="#">Link</a></li>
+                    <li><a href="#">Link</a></li>
+                </ul>
+            </div><!--/.well -->
+        </div><!--/span-->
+        <div class="span9" >
+            <div class="well">
+                <form class="form-search" style="margin-top: 5px;margin-bottom: 5px;">
+                    <input type="text" style="width:80%; height:10%;">
+                    <button type="submit" class="btn btn-primary btn-large" style="margin-left: 5%; width:15%; height: 10%;">Search</button>
+                </form>
+            </div>
+        </div><!--/span-->
+    </div><!--/row-->
 
-<div class="modal hide" id="loginOptions" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-header">
-    </div>
-    <div class="modal-body ">
-    </div>
-    <div class="modal-footer">
-    </div>
-</div>
+    <hr>
 
-<div class="modal hide" id="siteLogin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-header">
-    </div>
-    <div class="modal-body">
-    </div>
-</div>
+    <footer>
+        <p>&copy; Company 2013</p>
+    </footer>
+
+</div><!--/.fluid-container-->
 
 </body>

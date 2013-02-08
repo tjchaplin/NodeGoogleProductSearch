@@ -2,10 +2,13 @@
 var express = require('express')
     , routes = require('./Server')
     , http = require('http')
+    , https = require('https')
     , path = require('path')
     , cons = require('consolidate')
     , dustln = require('dustjs-linkedin')
-    ,package = require('./package.json');;
+    , package = require('./package.json')
+    , passport = require('passport')
+    , GoogleStrategy = require('passport-google').Strategy;
 
 var app = express();
 
@@ -18,8 +21,8 @@ global.host = 'localhost';
 
 console.log("Package:"+package.name+" app.name:"+app.name);
 
-require('./configuration')(app,express);
-require('./server/router')(app,express);
+require('./configuration')(app,express,passport,GoogleStrategy);
+require('./server/router')(app,express,passport);
 
 
 app.listen(app.get('port'), function(){
