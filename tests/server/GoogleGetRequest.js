@@ -1,42 +1,84 @@
 var should = require('should');
-var https = require('https');
+var sampleData = require('./SampleGoogleProductData');
+var googleProductDataFactory = require('../../server/Factories/GoogleProductDataFactory');
 
-var googleProductSearch = {};
-var options = {};
-var setup = function(){
-    console.log("Setting Up");
-    googleProductSearch.baseUrl = 'https://www.googleapis.com/shopping/search/v1/public/products';
-    googleProductSearch.key = ''
-    googleProductSearch.filters =[];
-    googleProductSearch.url = googleProductSearch.baseUrl+'?'+googleProductSearch.key+'&country=US';
+describe('Google Product Search',function(){
+    it("Should get result pagination results",function(){
+        var searchView = googleProductDataFactory.getProductSearchView(sampleData);
+        searchView.itemsPerPage.should.be.greaterThan(0)
+        searchView.startIndex.should.be.greaterThan(0)
+        searchView.totalItems.should.be.greaterThan(0)
+        searchView.currentItemCount.should.be.greaterThan(0)
+    })
+});
 
-    options = {
-        hostname : googleProductSearch.baseUrl,
-        path : '?key='+googleProductSearch.key+'&country=US',
-        method : 'GET'
-    };
 
-    console.log('Options:'+options.hostname+options.path+' method:'+options.method);
-}
+describe('Google Product Search',function(){
+    it("Should get each products gtin",function(){
+        var searchView = googleProductDataFactory.getProductSearchView(sampleData);
+        for(var i = 0; i < searchView.products.length; i++)
+        {
+            var productItem = searchView.products[i];
+            productItem.gtin.length.should.be.greaterThan(0);
+        }
+    })
+});
 
-describe('Google Api',function(){
-    it("Should be able to query",function(done){
-        setup();
+describe('Google Product Search',function(){
+    it("Should get each products retailer",function(){
+        var searchView = googleProductDataFactory.getProductSearchView(sampleData);
+        for(var i = 0; i < searchView.products.length; i++)
+        {
+            var productItem = searchView.products[i];
+            productItem.retailer.length.should.be.greaterThan(0);
+        }
+    })
+});
 
-        var req = https.get(googleProductSearch.baseUrl,  function(res) {
-            console.log("statusCode: ", res.statusCode);
-            console.log("headers: ", res.headers);
 
-            res.on('data', function(d) {
-                process.stdout.write(d);
-                done()
-            });
-        });
-        req.end();
+describe('Google Product Search',function(){
+    it("Should get each products name",function(){
+        var searchView = googleProductDataFactory.getProductSearchView(sampleData);
+        for(var i = 0; i < searchView.products.length; i++)
+        {
+            var productItem = searchView.products[i];
+            productItem.name.length.should.be.greaterThan(0);
+        }
+    })
+});
 
-        req.on('error', function(e) {
-            console.error(e);
-        });
 
+describe('Google Product Search',function(){
+    it("Should get each products description",function(){
+        var searchView = googleProductDataFactory.getProductSearchView(sampleData);
+        for(var i = 0; i < searchView.products.length; i++)
+        {
+            var productItem = searchView.products[i];
+            productItem.description.length.should.be.greaterThan(0);
+        }
+    })
+});
+
+
+describe('Google Product Search',function(){
+    it("Should get each products manufacturer",function(){
+        var searchView = googleProductDataFactory.getProductSearchView(sampleData);
+        for(var i = 0; i < searchView.products.length; i++)
+        {
+            var productItem = searchView.products[i];
+            productItem.manufacturer.length.should.be.greaterThan(0);
+        }
+    })
+});
+
+
+describe('Google Product Search',function(){
+    it("Should get each products image",function(){
+        var searchView = googleProductDataFactory.getProductSearchView(sampleData);
+        for(var i = 0; i < searchView.products.length; i++)
+        {
+            var productItem = searchView.products[i];
+            productItem.image.length.should.be.greaterThan(0);
+        }
     })
 });
