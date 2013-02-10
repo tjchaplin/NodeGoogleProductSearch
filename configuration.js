@@ -5,6 +5,9 @@ module.exports = function(app,express,passport,GoogleStrategy) {
         app.set('view engine', 'dust');
         app.set('views', app.root+'/views');
 
+        app.use(passport.initialize());
+        app.use(passport.session());
+
         app.use(app.router);
 
         app.use(express.favicon());
@@ -17,13 +20,34 @@ module.exports = function(app,express,passport,GoogleStrategy) {
         app.use(express.static(app.root+'/public', {redirect: false}));
     });
 
+
+    passport.serializeUser(function(user, done) {
+        done(null, user);
+    });
+
+    passport.deserializeUser(function(obj, done) {
+        done(null, obj);
+    });
+
+
     passport.use(new GoogleStrategy({
-            returnURL: 'http://localhost:3000/auth/google/return',
-            realm: 'http://localhost:3000'
+            clientID: "",
+            clientSecret: "",
+            callbackURL: "http://localhost:3000/auth/google/callback"
         },
-        function(identifier, profile, done) {
-            console.log("identifier:"+identifier+" :");
-            done();
+        function(accessToken, refreshToken, profile, done) {
+            console.log("accessToken:"+accessToken);
+            console.log("refreshToken:"+refreshToken);
+            console.log("profile:"+JSON.stringify(profile));
+            // asynchronous verification, for effect...
+            process.nextTick(function () {
+
+                // To keep the example simple, the user's Google profile is returned to
+                // represent the logged-in user.  In a typical application, you would want
+                // to associate the Google account with a user record in your database,
+                // and return that user instead.
+                return done(null, profile);
+            });
         }
     ));
 }

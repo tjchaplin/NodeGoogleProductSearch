@@ -8,7 +8,7 @@ var express = require('express')
     , dustln = require('dustjs-linkedin')
     , package = require('./package.json')
     , passport = require('passport')
-    , GoogleStrategy = require('passport-google').Strategy;
+    , GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 var app = express();
 
