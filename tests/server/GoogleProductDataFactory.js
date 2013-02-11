@@ -82,3 +82,29 @@ describe('Google Product Search',function(){
         }
     })
 });
+
+
+describe('Google Product Search',function(){
+    it("Should get top product retailers",function(){
+        var searchView = googleProductDataFactory.getProductSearchView(sampleData);
+        for(var i = 0; i < searchView.topRetailers.length; i++)
+        {
+            var retailer = searchView.topRetailers[i];
+            console.log(JSON.stringify(retailer));
+            retailer.name.length.should.be.greaterThan(0);
+        }
+    })
+});
+
+
+describe('Google Product Search',function(){
+    it("Should get top product manufacturers",function(){
+        var searchView = googleProductDataFactory.getProductSearchView(sampleData);
+        for(var i = 0; i < searchView.topManufacturers.length; i++)
+        {
+            var manufacturer = searchView.topManufacturers[i];
+            console.log(JSON.stringify(manufacturer));
+            manufacturer.name.length.should.be.greaterThan(0);
+        }
+    })
+});

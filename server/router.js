@@ -2,8 +2,11 @@ module.exports = function(app,express,passport) {
     var https = require('https');
 
     app.get('/',function(request, response){
-        console.log("/ User"+JSON.stringify(request.user));
-        response.render('index',{title:app.get('name')});
+        ensureAuthenticated(request,response,function(){
+            console.log("/ User"+JSON.stringify(request.user));
+            response.render('index',{title:app.get('name'),user: request.user});
+        });
+
     });
 
     app.get('/login',function(request, response){
@@ -11,39 +14,54 @@ module.exports = function(app,express,passport) {
         response.render('index',{title:app.get('name'),user: request.user});
     });
 
-    app.get('/productSearch',function(request, response){
-        var googleProductSearch = {};
+    app.get('/googleProductSearch',function(request, response){
+        ensureAuthenticated(request,response,function(request,response){
+            var search = request.query["searchString"];
+            if(search.length >0)
+                search ="+"+search.replace(/ /g,'+');
 
-        googleProductSearch.hostname = 'www.googleapis.com';
-        googleProductSearch.path = '/shopping/search/v1/public/products';
-        googleProductSearch.key = ''
-        googleProductSearch.filters ='country=US&alt=json';
-        googleProductSearch.Authorization = '';
+            var googleProductDataFactory = require('./Factories/GoogleProductDataFactory');
 
-        var googleProductSearchRequst = {
-            hostname : googleProductSearch.hostname,
-            path : googleProductSearch.path+'?'+googleProductSearch.filters+'&key='+googleProductSearch.key,
-            headers : {Authorization: 'Bearer '+googleProductSearch.Authorization},
-            Method : 'GET'
-        };
+            var googleProductSearch = {};
 
-        var req = https.request(googleProductSearchRequst,  function(res) {
-            console.log("statusCode: ", res.statusCode);
-            console.log("headers: ", res.headers);
+            googleProductSearch.hostname = 'www.googleapis.com';
+            googleProductSearch.path = '/shopping/search/v1/public/products';
+            googleProductSearch.key = ''
+            googleProductSearch.filters ='country=UK&alt=json&q=disney'+search;
+            googleProductSearch.Authorization = request.user.accessToken;
 
-            res.on('data', function(d) {
-                process.stdout.write(d);
+            var googleProductSearchRequst = {
+                hostname : googleProductSearch.hostname,
+                path : googleProductSearch.path+'?'+googleProductSearch.filters+'&key='+googleProductSearch.key,
+                headers : {Authorization: 'Bearer '+googleProductSearch.Authorization},
+                Method : 'GET'
+            };
+
+            var req = https.request(googleProductSearchRequst,  function(res) {
+                console.log("statusCode: ", res.statusCode);
+                console.log("headers: ", res.headers);
+
+                var searchView = {};
+                var data = '';
+                res.on('data', function(chunkedData) {
+                    data += chunkedData
+                    //process.stdout.write(chunkedData);
+                });
+
+                res.on('end',function(){
+                    var searchView = googleProductDataFactory.getProductSearchView(JSON.parse(data));
+                    response.render('productSearch',{title:app.get('name'),user: request.user,productSearchResults:searchView});
+                });
             });
-            response.render('index',{title:app.get('name')});
-            //res.render('/', { user: req.user, message: req.flash('error') });
-        });
-        req.end();
+            req.end();
 
 
-        req.on('error', function(e) {
-            console.error(e);
+            req.on('error', function(e) {
+                console.error(e);
+            });
         });
     });
+
 
 
     app.get('/auth/google',
@@ -62,7 +80,7 @@ module.exports = function(app,express,passport) {
     app.get('/auth/google/callback',
         passport.authenticate('google', { failureRedirect: '/login' }),
         function(request, response) {
-            console.log("/auth/google/callback User"+JSON.stringify(request.user));
+            console.log("/auth/google/callback User:"+JSON.stringify(request.user.id));
             response.redirect('/');
         });
 
@@ -71,8 +89,12 @@ module.exports = function(app,express,passport) {
         res.redirect('/');
     });
 
-    function ensureAuthenticated(req, res, next) {
-        if (req.isAuthenticated()) { return next(); }
-        res.redirect('/login');
+    function ensureAuthenticated(request, response, next) {
+        console.log("request:"+JSON.stringify(request.user));
+        if (request.isAuthenticated()) {
+            return next(request,response);
+        }
+
+        response.redirect('/login');
     }
 }
